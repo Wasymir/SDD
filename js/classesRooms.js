@@ -1,3 +1,4 @@
+import {refresh} from "./invview";
 const neighborhood = {
     "00": [1, 7],
     "01": [0, 2],
@@ -43,10 +44,12 @@ class Room {
         this.buttonImg = document.querySelector('#' + this.data.btnId + ' > img')
         this.selector = '#' + this.data.btnId + ' > img'
         this.button = document.querySelector(this.selector)
+        this.buttonImg.setAttribute("src", "../img/" + this.data.type + ".png")
     }
 
     solve() {
         this.data.solved = true
+        this.refreshData()
     }
 
     visited() {
@@ -62,24 +65,29 @@ class Room {
         const max = Math.floor(5);
         return Math.floor(Math.random() * (max - min) + min);
     }
+
     swap(where) {
         this.data.btnId = where
         this.buttonImg = document.querySelector('#' + this.data.btnId + ' > img')
         this.selector = '#' + this.data.btnId + ' > img'
         this.button = document.querySelector(this.selector)
-        this.buttonImg.setAttribute("src","../img/" + this.data.type + ".png")
+        this.buttonImg.setAttribute("src", "../img/" + this.data.type + ".png")
+        this.refreshData()
+    }
+
+}
+
+class Ex extends Room {
+    constructor(buttonId) {
+        super(buttonId, 'ex');
+        this.refreshData()
+    }
+
+    resolver() {
+        //    todo: sktypt kończący grę
     }
 }
 
-class De extends Room {
-    constructor(buttonId) {
-        super(buttonId,'de');
-        this.refreshData()
-    }
-    resolver(){
-    //    todo: sktypt kończący grę
-    }
-}
 class Ss extends Room {
     constructor(buttonId) {
         super(buttonId,'ss');
@@ -89,32 +97,179 @@ class Ss extends Room {
 
 
     }
+
     resolver(){
         if (sessionStorage.getItem("ge")){
             switch (window.prompt("What would you buy?(- gem) ['ds' - defend scroll,\n 'dt' - disable spike trap,\n 'fs' - foresight scroll,\n 'hs' - health scroll,\n 'sw' - swap scroll]")) {
                 case "ds":
-                    sessionStorage.setItem("ds",true)
+                    sessio
+                    nStorage.setItem("ds", true)
+                    sessionStorage.setItem("ge", false)
                     break;
                 case "dt":
-                    sessionStorage.setItem("dt",true)
+                    sessionStorage.setItem("dt", true)
+                    sessionStorage.setItem("ge", false)
                     break;
                 case "fs":
-                    sessionStorage.setItem("fs",true)
+                    sessionStorage.setItem("fs", true)
+                    sessionStorage.setItem("ge", false)
                     break;
                 case "hs":
-                    sessionStorage.setItem("hs",true)
+                    sessionStorage.setItem("hs", true)
+                    sessionStorage.setItem("ge", false)
                     break;
                 case "sw":
-                    sessionStorage.setItem("sw",true)
+                    sessionStorage.setItem("sw", true)
+                    sessionStorage.setItem("ge", false)
+                    break;
+                default:
                     break;
             }
+            this.refreshData()
         }
     }
 }
-class St extends Room{
+
+class St extends Room {
     constructor(buttonId) {
-        super(buttonId,"st");
+        super(buttonId, "st");
         this.data.desc = "Spike trap\nCan be resoled with Magic rope\nIf resolved manually:\n60% resolve\n40% -2hp and resole"
+        this.refreshData()
+    }
+
+    resolver() {
+        this.fate1 = this.fate()
+        this.fate2 = this.fate()
+        if ((this.fate1 + this.fate2) % 2 != 0) {
+            if (sessionStorage.getItem("rp")) {
+                if (window.confirm("Your fate check went wrong!\n You cen retry it by using retry potion.\nDo you want to use it? ")) {
+                    sessionStorage.setItem("rp", false)
+                    this.refreshData()
+                    this.resolver()
+                } else {
+                    sessionStorage.setItem("hp", sessionStorage.getItem("hp") - 2)
+                    this.solve()
+                }
+            } else {
+                this.solve()
+                this.refreshData()
+            }
+
+        }
 
     }
+}
+
+class Pt extends Room {
+    constructor(buttonId) {
+        super(buttonId, "pt");
+        this.data.desc = "Pit Trap\nBe aware of hole!\nCrossing unsolved cost -2hp.\nCan be solved only with Magic rope"
+        this.refreshData()
+    }
+
+    resolver() {
+        if (sessionStorage.getItem("mr")) {
+            if (window.confirm("You will get -2hp unless you use magic rope\nUse it?")) {
+                this.solve()
+                sessionStorage.setItem("mr", false)
+            } else {
+                sessionStorage.setItem("hp", sessionStorage.getItem("hp") - 2)
+                this.solve()
+            }
+        } else {
+            sessionStorage.setItem("hp", sessionStorage.getItem("hp") - 2)
+            this.solve()
+        }
+
+    }
+}
+
+class De extends Room {
+    constructor() {
+        super(buttonId, "de");
+        this.data.desc = "Dead end\nNo way"
+        this.refreshData()
+    }
+
+    resolver() {
+        window.alert("You can't resolve that room.")
+    }
+}
+
+class Tc extends Room {
+    constructor() {
+        super(buttonId, "de");
+        this.data.desc = "Treasure Chest\nRandom item\n20% - Rusty Cage\n20% - Magic Rope"
+        this.refreshData()
+    }
+
+    resolver() {
+        this.fateCh = this.fate()
+        this.items = {
+            0: ["rk", "Rusty Key"],
+            1: ["mr", "Magic Rope"],
+            2: ["rp", "Retry Potion"],
+            3: ["", "Explosion Trap (-2hp)"],
+            4: ["hs", "Healt Scroll"]
+        }
+        if (sessionStorage.getItem("rp")) {
+            if (window.confirm("You will get: " + this.items[this.fateCh][1] + "\nYou can retry fate check with Retry Potion")) {
+                sessionStorage.setItem("rp", false)
+                this.refreshData()
+            } else {
+                if (this.fateCh == 3) {
+                    sessionStorage.setItem("hp", sessionStorage.getItem("hp") - 2)
+                    this.refreshData()
+                } else {
+                    sessionStorage.getItem(this.items[this.fateCh][0], true)
+                }
+            }
+        } else {
+            if (this.fateCh == 3) {
+                sessionStorage.setItem("hp", sessionStorage.getItem("hp") - 2)
+                this.refreshData()
+            } else {
+                sessionStorage.getItem(this.items[this.fateCh][0], true)
+            }
+
+        }
+
+    }
+}
+
+class Ld extends Room {
+    constructor(buttonId) {
+        super(buttonId, 'ld');
+        this.data.desc = "Lock Door\nUse Rusty Key to resolve it"
+        this.refreshData()
+    }
+
+    resolver() {
+        if (sessionStorage.getItem("rs")) {
+            if (window.confirm("Do you want to use Rusty Key?")) {
+                sessionStorage.setItem("rp", false)
+                this.visited()
+            }
+
+        } else {
+            window.alert("You don't have Rusty Key?")
+        }
+    }
+}
+
+class Ff extends Room {
+    constructor(bttonId) {
+        super(bttonId, "ff");
+        this.data.desc = "Fickle Fountain\nFate Check:\n40% - +2hp\n60% - -1hp"
+        this.refreshData()
+    }
+
+    resolver() {
+        this.fateCh = this.fate()
+        switch (this.fateCh) {
+            case "":
+
+        }
+    }
+
 }

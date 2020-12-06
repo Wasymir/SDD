@@ -58,6 +58,13 @@ class Room {
 
     refreshData() {
         sessionStorage.setItem(this.selector, this.data.JSON.stringify(this.data))
+        if (sessionStorage.getItem("hp") > 5) {
+            sessionStorage.setItem("hp", 5)
+        }
+        if (sessionStorage.getItem("hp") < 0) {
+            sessionStorage.setItem("hp", 0)
+        }
+        refresh()
     }
 
     fate() {
@@ -266,10 +273,10 @@ class Ff extends Room {
 
     resolver() {
         this.fateCh = this.fate()
-        switch (this.fateCh) {
-            case "":
+        if (this.fateCh == 1 || this.fateCh == 3) {
 
         }
+
     }
 
 }

@@ -274,7 +274,7 @@ class Ff extends Room {
     resolver() {
         this.fateCh = this.fate()
         if (this.fateCh == 1 || this.fateCh == 3) {
-
+            sessionStorage.setItem("hp", sessionStorage.getItem("hp") + 2)
         }
 
     }

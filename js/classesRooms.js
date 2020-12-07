@@ -35,7 +35,8 @@ function Roomdata(buttonId, type) {
     this.solved = false;
     this.neighbor = neighborhood[this.btnId.slice(3, 5)];
     this.hp = null;
-    this.desc = ``
+    this.desc = ``;
+    this.autosolved = false
 }
 
 class Room {
@@ -53,17 +54,20 @@ class Room {
     }
 
     visited() {
-        this.data.solved = true
+        this.data.visited = true
     }
 
     refreshData() {
-        sessionStorage.setItem(this.selector, this.data.JSON.stringify(this.data))
         if (sessionStorage.getItem("hp") > 5) {
             sessionStorage.setItem("hp", 5)
         }
         if (sessionStorage.getItem("hp") < 0) {
             sessionStorage.setItem("hp", 0)
         }
+        if (this.data.autosolved && this.data.visited) {
+            this.data.solved = true
+        }
+        sessionStorage.setItem(this.selector, this.data.JSON.stringify(this.data))
         refresh()
     }
 
@@ -87,6 +91,7 @@ class Room {
 class Ex extends Room {
     constructor(buttonId) {
         super(buttonId, 'ex');
+        this.data.autosolved = true
         this.refreshData()
     }
 
@@ -99,7 +104,7 @@ class Ss extends Room {
     constructor(buttonId) {
         super(buttonId,'ss');
         this.data.desc = "Spell Scroll Merchant\nYou can buy here magic scrolls. Cost 1Gem.\nDefend scroll - kill every enemy exept dragon\nSpike scroll - disable one spike trap\n forsesign scroll - discorver one room, health scroll - +2 hp\nswapscroll - replace 2 room"
-
+        this.data.autosolved = true
         this.refreshData()
 
 
@@ -195,6 +200,7 @@ class De extends Room {
     constructor() {
         super(buttonId, "de");
         this.data.desc = "Dead end\nNo way"
+        this.data.autosolved = true
         this.refreshData()
     }
 
@@ -207,6 +213,7 @@ class Tc extends Room {
     constructor() {
         super(buttonId, "de");
         this.data.desc = "Treasure Chest\nRandom item\n20% - Rusty Cage\n20% - Magic Rope"
+        this.data.autosolved = true
         this.refreshData()
     }
 
@@ -268,6 +275,7 @@ class Ff extends Room {
     constructor(bttonId) {
         super(bttonId, "ff");
         this.data.desc = "Fickle Fountain\nFate Check:\n40% - +2hp\n60% - -1hp"
+        this.data.autosolved = true
         this.refreshData()
     }
 
@@ -275,8 +283,18 @@ class Ff extends Room {
         this.fateCh = this.fate()
         if (this.fateCh == 1 || this.fateCh == 3) {
             sessionStorage.setItem("hp", sessionStorage.getItem("hp") + 2)
+            this.refreshData()
+        } else {
+            if (sessionStorage.getItem("rp")) {
+                if (window.confirm("You will get -1hp unless you use Retry Potion.\nDo you want it?")) {
+                    sessionStorage.setItem("rp", false)
+                } else {
+                    sessionStorage.setItem("hp", sessionStorage.getItem("hp") - 1)
+                }
+            } else {
+                sessionStorage.setItem("hp", sessionStorage.getItem("hp") - 1)
+            }
         }
 
     }
-
 }

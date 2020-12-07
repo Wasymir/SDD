@@ -392,3 +392,24 @@ class Ms extends Room {
         this.refreshData()
     }
 }
+
+class Enemy extends Room {
+    constructor(buttonId, type) {
+        super(buttonId, type);
+    }
+
+    refreshData() {
+        if (this.data.hp < 0) {
+            this.data.hp = 0
+        }
+        if (this.data.hp <= 0) {
+            this.solve()
+        }
+        super.refreshData();
+    }
+
+    damge(value) {
+        this.data.hp -= value
+        this.refreshData()
+    }
+}

@@ -254,6 +254,7 @@ class Tc extends Room {
             if (window.confirm("You will get: " + this.items[this.fateCh][1] + "\nYou can retry fate check with Retry Potion")) {
                 sessionStorage.setItem("rp", false)
                 this.refreshData()
+                this.resolver()
             } else {
                 if (this.fateCh == 3) {
                     if (sessionStorage.getItem("ms")) {
@@ -324,6 +325,8 @@ class Ff extends Room {
             if (sessionStorage.getItem("rp")) {
                 if (window.confirm("You will get -1hp unless you use Retry Potion.\nDo you want it?")) {
                     sessionStorage.setItem("rp", false)
+                    this.refreshData()
+                    this.resolver()
                 } else {
                     if (sessionStorage.getItem("ms")) {
                         sessionStorage.setItem("ms", false)

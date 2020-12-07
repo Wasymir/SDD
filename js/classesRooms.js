@@ -159,11 +159,23 @@ class St extends Room {
                     this.refreshData()
                     this.resolver()
                 } else {
+                    if (sessionStorage.getItem("ms")) {
+                        sessionStorage.setItem("ms", false)
+                        this.solve()
+                    } else {
+                        sessionStorage.setItem("hp", sessionStorage.getItem("hp") - 2)
+                        this.solve()
+                    }
+                    this.refreshData()
+                }
+            } else {
+                if (sessionStorage.getItem("ms")) {
+                    sessionStorage.setItem("ms", false)
+                    this.solve()
+                } else {
                     sessionStorage.setItem("hp", sessionStorage.getItem("hp") - 2)
                     this.solve()
                 }
-            } else {
-                this.solve()
                 this.refreshData()
             }
 
@@ -185,12 +197,24 @@ class Pt extends Room {
                 this.solve()
                 sessionStorage.setItem("mr", false)
             } else {
+                if (sessionStorage.getItem("ms")) {
+                    sessionStorage.setItem("ms", false)
+                    this.solve()
+                } else {
+                    sessionStorage.setItem("hp", sessionStorage.getItem("hp") - 2)
+                    this.solve()
+                }
+                this.refreshData()
+            }
+        } else {
+            if (sessionStorage.getItem("ms")) {
+                sessionStorage.setItem("ms", false)
+                this.solve()
+            } else {
                 sessionStorage.setItem("hp", sessionStorage.getItem("hp") - 2)
                 this.solve()
             }
-        } else {
-            sessionStorage.setItem("hp", sessionStorage.getItem("hp") - 2)
-            this.solve()
+            this.refreshData()
         }
 
     }
@@ -232,7 +256,13 @@ class Tc extends Room {
                 this.refreshData()
             } else {
                 if (this.fateCh == 3) {
-                    sessionStorage.setItem("hp", sessionStorage.getItem("hp") - 2)
+                    if (sessionStorage.getItem("ms")) {
+                        sessionStorage.setItem("ms", false)
+                        this.solve()
+                    } else {
+                        sessionStorage.setItem("hp", sessionStorage.getItem("hp") - 2)
+                        this.solve()
+                    }
                     this.refreshData()
                 } else {
                     sessionStorage.getItem(this.items[this.fateCh][0], true)
@@ -240,7 +270,13 @@ class Tc extends Room {
             }
         } else {
             if (this.fateCh == 3) {
-                sessionStorage.setItem("hp", sessionStorage.getItem("hp") - 2)
+                if (sessionStorage.getItem("ms")) {
+                    sessionStorage.setItem("ms", false)
+                    this.solve()
+                } else {
+                    sessionStorage.setItem("hp", sessionStorage.getItem("hp") - 2)
+                    this.solve()
+                }
                 this.refreshData()
             } else {
                 sessionStorage.getItem(this.items[this.fateCh][0], true)
@@ -276,7 +312,7 @@ class Ff extends Room {
         super(bttonId, "ff");
         this.data.desc = "Fickle Fountain\nFate Check:\n40% - +2hp\n60% - -1hp"
         this.data.autosolved = true
-        this.refreshData()
+        this.refreshData();
     }
 
     resolver() {
@@ -289,12 +325,67 @@ class Ff extends Room {
                 if (window.confirm("You will get -1hp unless you use Retry Potion.\nDo you want it?")) {
                     sessionStorage.setItem("rp", false)
                 } else {
-                    sessionStorage.setItem("hp", sessionStorage.getItem("hp") - 1)
+                    if (sessionStorage.getItem("ms")) {
+                        sessionStorage.setItem("ms", false)
+                        this.solve()
+                    } else {
+                        sessionStorage.setItem("hp", sessionStorage.getItem("hp") - 1)
+                        this.solve()
+                    }
+                    this.refreshData()
                 }
             } else {
-                sessionStorage.setItem("hp", sessionStorage.getItem("hp") - 1)
+                if (sessionStorage.getItem("ms")) {
+                    sessionStorage.setItem("ms", false)
+                    this.solve()
+                } else {
+                    sessionStorage.setItem("hp", sessionStorage.getItem("hp") - 1)
+                    this.solve()
+                }
+                this.refreshData()
             }
         }
 
+    }
+}
+
+class Sp extends Room {
+    constructor(buttonid) {
+        super(buttonid, "sp");
+        this.data.desc = "Secret Passage\nGo to another Secret Passage"
+        this.data.autosolved = true
+        this.refreshData();
+    }
+
+    resolver() {
+        //    todo: skrypt odkrywający druge sp
+    }
+}
+
+class Ge extends Room {
+    constructor(buttonId) {
+        super(buttonId, "ge");
+        this.data.desc = "Gem\nBuy a scroll!"
+        this.data.autosolved = true
+        this.refreshData()
+    }
+
+    resolver() {
+        sessionStorage.setItem("ge", true)
+        this.refreshData()
+    }
+}
+
+class Ms extends Room {
+    constructor(buttonId) {
+        super(buttonId, "ms");
+        this.data.desc = "Magic Shield\nDefend yourself with it!"
+        this.data.autosolved = true
+        this.refreshData()
+    }
+
+    resolver() {
+        sessionStorage.setItem("ms", true)
+        this.refreshData()
     }
 }

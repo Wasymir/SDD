@@ -393,23 +393,10 @@ class Ms extends Room {
     }
 }
 
-class Enemy extends Room {
-    constructor(buttonId, type) {
-        super(buttonId, type);
+class sl extends Room {
+    constructor(buttonId) {
+        super(buttonId, "sl");
+
     }
 
-    refreshData() {
-        if (this.data.hp < 0) {
-            this.data.hp = 0
-        }
-        if (this.data.hp <= 0) {
-            this.solve()
-        }
-        super.refreshData();
-    }
-
-    damge(value) {
-        this.data.hp -= value
-        this.refreshData()
-    }
 }

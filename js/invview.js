@@ -10,6 +10,7 @@ const dt = document.querySelector("#dt")
 const hs = document.querySelector("#hs")
 const fs = document.querySelector("#fs")
 const sw = document.querySelector("#sw")
+const ge = document.querySelector("#ge")
 const viewhp = function (quantity) {
     hpbar.forEach((ell) => {
         ell.setAttribute("class", "hidden")
@@ -90,6 +91,13 @@ const viewHideItemScroll = function (itemId, view) {
                 sw.setAttribute("class", "hidden")
             }
             break
+        case 'ge':
+            if (view) {
+                ge.setAttribute("class", "visible")
+            } else {
+                ge.setAttribute("class", "hidden")
+            }
+            break
     }
 }
 const loadHp = function () {
@@ -131,8 +139,6 @@ function refresh() {
     loadInventory()
     loadHp()
 }
-
-sessionStorage.setItem("hp",5)
 refresh()
 export {refresh}
 
